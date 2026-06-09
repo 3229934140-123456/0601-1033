@@ -3,7 +3,7 @@ import { View, Text, Input, Textarea, Button } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
-import { getStatusText } from '@/utils/format'
+import { getExceptionStatusText } from '@/utils/format'
 import StatusTag from '@/components/StatusTag'
 import dayjs from 'dayjs'
 import classnames from 'classnames'
@@ -77,11 +77,11 @@ const ExceptionDetailPage: React.FC = () => {
       <View className={styles.statusHeader}>
         <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text className={styles.statusBadge}>
-            {isEdit ? '新建异常说明' : getStatusText(existingRecord?.status || 'pending')}
+            {isEdit ? '新建异常说明' : getExceptionStatusText(existingRecord?.status || 'pending')}
           </Text>
           {existingRecord && (
             <StatusTag
-              text={getStatusText(existingRecord?.status || 'pending')}
+              text={getExceptionStatusText(existingRecord?.status || 'pending')}
               type={getStatusTagType(existingRecord?.status || 'pending')}
             />
           )}

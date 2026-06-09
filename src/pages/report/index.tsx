@@ -9,17 +9,17 @@ import dayjs from 'dayjs'
 
 const ReportPage: React.FC = () => {
   const { dailyRecords, currentVoyageId, getVoyageStatistics, getMonthlyReport, ships, voyages, fuelingRecords } = useFuelStore()
-  const [, forceUpdate] = useState(0)
+  const [refreshVersion, setRefreshVersion] = useState(0)
   const [showReportModal, setShowReportModal] = useState(false)
   const [reportContent, setReportContent] = useState('')
 
   useDidShow(() => {
-    forceUpdate(n => n + 1)
+    setRefreshVersion(v => v + 1)
   })
 
   const voyageStats = useMemo(() => {
     return getVoyageStatistics(currentVoyageId)
-  }, [getVoyageStatistics, currentVoyageId, dailyRecords.length, fuelingRecords.length, forceUpdate()])
+  }, [getVoyageStatistics, currentVoyageId, dailyRecords.length, fuelingRecords.length, refreshVersion])
 
   const currentVoyage = useMemo(() => {
     return voyages.find(v => v.id === currentVoyageId)
@@ -49,7 +49,7 @@ const ReportPage: React.FC = () => {
       if (report) reports.push(report)
     }
     return reports
-  }, [getMonthlyReport, currentShip, dailyRecords, fuelingRecords, forceUpdate()])
+  }, [getMonthlyReport, currentShip, dailyRecords.length, fuelingRecords.length, refreshVersion])
 
   const generateReportText = (month: string): string => {
     const report = getMonthlyReport(month, currentShip?.name || '远洋号')

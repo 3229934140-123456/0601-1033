@@ -13,17 +13,27 @@ export const formatDate = (dateStr: string): string => {
   return dateStr
 }
 
-export const getStatusText = (status: string): string => {
+export const getVoyageStatusText = (status: string): string => {
   const map: Record<string, string> = {
     in_progress: '进行中',
     completed: '已完成',
-    pending: '待启航',
+    pending: '待启航'
+  }
+  return map[status] || status
+}
+
+export const getExceptionStatusText = (status: string): string => {
+  const map: Record<string, string> = {
     approved: '已通过',
     rejected: '已驳回',
     reviewing: '审核中',
     pending: '待审核'
   }
   return map[status] || status
+}
+
+export const getStatusText = (status: string): string => {
+  return getExceptionStatusText(status) || getVoyageStatusText(status) || status
 }
 
 export const getStatusColor = (status: string): string => {

@@ -32,6 +32,32 @@ export const mockVoyages: Voyage[] = [
     status: 'pending',
     plannedFuelConsumption: 1200,
     distance: 4200
+  },
+  {
+    id: 'v003',
+    shipId: 's002',
+    shipName: '海航号',
+    segment: '深圳-洛杉矶',
+    departurePort: '深圳港',
+    arrivalPort: '洛杉矶港',
+    departureDate: '2026-06-03',
+    estimatedArrivalDate: '2026-06-25',
+    status: 'in_progress',
+    plannedFuelConsumption: 1500,
+    distance: 5800
+  },
+  {
+    id: 'v004',
+    shipId: 's003',
+    shipName: '东方之星',
+    segment: '青岛-釜山',
+    departurePort: '青岛港',
+    arrivalPort: '釜山港',
+    departureDate: '2026-05-28',
+    estimatedArrivalDate: '2026-06-10',
+    status: 'in_progress',
+    plannedFuelConsumption: 380,
+    distance: 650
   }
 ]
 

@@ -5,7 +5,7 @@ import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
 import EmptyState from '@/components/EmptyState'
 import StatusTag from '@/components/StatusTag'
-import { getStatusText, getExceptionTypeText } from '@/utils/format'
+import { getExceptionStatusText, getExceptionTypeText } from '@/utils/format'
 import { ExceptionStatus } from '@/types/fuel'
 import classnames from 'classnames'
 
@@ -101,7 +101,7 @@ const ExceptionPage: React.FC = () => {
                   <Text className={styles.exceptionDate}>{record.date}</Text>
                   <Text className={styles.exceptionType}>{getExceptionTypeText(record.type)}</Text>
                 </View>
-                <StatusTag text={getStatusText(record.status)} type={getStatusTagType(record.status)} />
+                <StatusTag text={getExceptionStatusText(record.status)} type={getStatusTagType(record.status)} />
               </View>
               <View className={styles.cardBody}>
                 <Text className={styles.exceptionDesc}>{record.description}</Text>

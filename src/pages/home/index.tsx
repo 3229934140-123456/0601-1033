@@ -6,7 +6,7 @@ import { useFuelStore } from '@/store/useFuelStore'
 import StatCard from '@/components/StatCard'
 import SectionHeader from '@/components/SectionHeader'
 import VoyageSelector from '@/components/VoyageSelector'
-import { formatNumber, getStatusText } from '@/utils/format'
+import { formatNumber, getVoyageStatusText } from '@/utils/format'
 
 const HomePage: React.FC = () => {
   const {
@@ -19,11 +19,11 @@ const HomePage: React.FC = () => {
 
   const [showSelector, setShowSelector] = useState(false)
   const [selectorMode, setSelectorMode] = useState<'ship' | 'voyage' | 'all'>('all')
-  const [, forceUpdate] = useState(0)
+  const [refreshVersion, setRefreshVersion] = useState(0)
 
   useDidShow(() => {
-    console.log('[HomePage] onShow, force refresh')
-    forceUpdate(n => n + 1)
+    console.log('[HomePage] onShow, bumping refresh version')
+    setRefreshVersion(v => v + 1)
   })
 
   const currentVoyage = useMemo(() => {
@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
 
   const voyageStats = useMemo(() => {
     return getVoyageStatistics(currentVoyageId)
-  }, [getVoyageStatistics, currentVoyageId, dailyRecords.length, forceUpdate()])
+  }, [getVoyageStatistics, currentVoyageId, dailyRecords.length, refreshVersion])
 
   const missingDates = useMemo(() => {
     if (!currentVoyage) return []
@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
               <Text className={styles.shipCode}>{currentShip?.code || 'YY-001'} · {currentShip?.type || '散货船'}</Text>
             </View>
           </View>
-          <Text className={styles.statusBadge}>{getStatusText(currentVoyage.status)}</Text>
+          <Text className={styles.statusBadge}>{getVoyageStatusText(currentVoyage.status)}</Text>
         </View>
         <View className={styles.voyageSelector} onClick={handleSelectVoyage}>
           <View className={styles.voyageInfo}>
