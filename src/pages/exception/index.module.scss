@@ -1,0 +1,169 @@
+@use '@/styles/variables.scss' as *;
+
+.exceptionPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.filterTabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-sm $page-padding;
+  gap: $spacing-md;
+  box-shadow: $shadow-card;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tabItem {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+  white-space: nowrap;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.listSection {
+  padding: $page-padding;
+}
+
+.exceptionCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+  border-left: 8rpx solid transparent;
+
+  &.typeHigh {
+    border-left-color: $color-warning;
+  }
+
+  &.typeAbnormal {
+    border-left-color: $color-error;
+  }
+
+  &.typeOther {
+    border-left-color: $color-primary;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.exceptionDate {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.exceptionType {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.cardBody {
+  margin-bottom: $spacing-md;
+}
+
+.exceptionDesc {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  line-height: $line-height-normal;
+  margin-bottom: $spacing-sm;
+}
+
+.exceptionReason {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+  @include text-ellipsis-multi(2);
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-md;
+  border-top: 2rpx solid $color-divider;
+}
+
+.reviewerInfo {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.fabButton {
+  position: fixed;
+  right: $page-padding;
+  bottom: 180rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: $radius-round;
+  background: linear-gradient(135deg, $color-warning 0%, #ff9c3e 100%);
+  box-shadow: 0 8rpx 24rpx rgba(255, 125, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+  z-index: 100;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.fabIcon {
+  font-size: 56rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-light;
+}
+
+.reviewSection {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 2rpx dashed $color-border;
+}
+
+.reviewLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.reviewComment {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+  background: $color-bg-hover;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+}

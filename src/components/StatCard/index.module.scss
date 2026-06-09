@@ -1,0 +1,68 @@
+@use '@/styles/variables.scss' as *;
+
+.statCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  &.highlight {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+
+    .title, .value, .unit {
+      color: $color-text-white;
+    }
+
+    .trend {
+      background: rgba(255, 255, 255, 0.2);
+      color: $color-text-white;
+    }
+  }
+}
+
+.title {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
+.value {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.unit {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.trend {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  background: $color-bg-hover;
+
+  &.up {
+    color: $color-error;
+  }
+
+  &.down {
+    color: $color-success;
+  }
+
+  &.normal {
+    color: $color-text-tertiary;
+  }
+}

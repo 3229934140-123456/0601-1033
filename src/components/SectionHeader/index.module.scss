@@ -1,0 +1,31 @@
+@use '@/styles/variables.scss' as *;
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.titleBar {
+  width: 8rpx;
+  height: 32rpx;
+  background: linear-gradient(180deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-xs;
+}
+
+.titleText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.extra {
+  flex-shrink: 0;
+}

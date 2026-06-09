@@ -1,0 +1,321 @@
+@use '@/styles/variables.scss' as *;
+
+.homePage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(0, 102, 204, 0.08) 0%, $color-bg-page 300rpx);
+  padding-bottom: $spacing-xl;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-lg $page-padding $spacing-xl;
+  border-radius: 0 0 $radius-xl $radius-xl;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.shipInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.shipAvatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: $radius-lg;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shipAvatarText {
+  font-size: 44rpx;
+}
+
+.shipDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.shipName {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+}
+
+.shipCode {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.statusBadge {
+  padding: 8rpx $spacing-md;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.voyageSelector {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.voyageInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.voyageSegment {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+}
+
+.voyageDate {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.selectorArrow {
+  font-size: $font-size-lg;
+  color: $color-text-white;
+}
+
+.content {
+  padding: 0 $page-padding;
+  margin-top: -$spacing-lg;
+}
+
+.voyageCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.voyageRoute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.routePort {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  flex: 1;
+}
+
+.portName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.portLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.routeCenter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: 0 $spacing-md;
+}
+
+.routeLine {
+  flex: 1;
+  height: 2rpx;
+  background: $color-border;
+  position: relative;
+}
+
+.routeLineDot {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+  background: $color-primary;
+  transform: translateY(-50%);
+}
+
+.routeDistance {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.routePortRight {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.progressSection {
+  margin-top: $spacing-md;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.progressText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.progressPercent {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.progressBar {
+  width: 100%;
+  height: 12rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-round;
+  transition: width $transition-base;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.quickActions {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md 0;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+
+  &:active {
+    background: $color-bg-hover;
+    transform: scale(0.96);
+  }
+}
+
+.actionIcon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+
+  &.iconBlue {
+    background: rgba(0, 102, 204, 0.1);
+  }
+
+  &.iconGreen {
+    background: rgba(0, 180, 42, 0.1);
+  }
+
+  &.iconOrange {
+    background: rgba(255, 125, 0, 0.1);
+  }
+
+  &.iconPurple {
+    background: rgba(114, 46, 209, 0.1);
+  }
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.alertCard {
+  background: linear-gradient(135deg, rgba(255, 125, 0, 0.1) 0%, rgba(255, 125, 0, 0.05) 100%);
+  border: 2rpx solid rgba(255, 125, 0, 0.2);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.alertIcon {
+  font-size: $font-size-lg;
+}
+
+.alertTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+}
+
+.alertContent {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.alertAction {
+  margin-top: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: $color-warning;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+  display: inline-block;
+}

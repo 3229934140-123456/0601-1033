@@ -1,0 +1,214 @@
+@use '@/styles/variables.scss' as *;
+
+.exceptionDetailPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 180rpx;
+}
+
+.statusHeader {
+  background: linear-gradient(135deg, $color-warning 0%, #ff9c3e 100%);
+  padding: $spacing-xl $page-padding;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: $spacing-xs $spacing-md;
+  background: rgba(255, 255, 255, 255, 0.2);
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+}
+
+.dateText {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  margin: $spacing-sm 0;
+}
+
+.descText {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: $line-height-normal;
+}
+
+.formSection {
+  background: $color-bg-card;
+  margin: $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  font-weight: $font-weight-medium;
+}
+
+.formInput {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.formInputPlaceholder {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.formTextarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  line-height: $line-height-loose;
+}
+
+.typeSelector {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.typeOption {
+  flex: 1;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-align: center;
+  transition: all $transition-base;
+
+  &.active {
+    background: rgba(255, 125, 0, 0.15);
+    color: $color-warning;
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.reviewSection {
+  background: $color-bg-card;
+  margin: 0 $page-padding $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.reviewTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.reviewInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 2rpx solid $color-divider;
+}
+
+.reviewerName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.reviewDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.reviewCommentBox {
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.reviewCommentText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  line-height: $line-height-loose;
+}
+
+.readOnlyValue {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: $color-bg-hover;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  line-height: $line-height-loose;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.cancelBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+
+  &:active {
+    background: $color-border;
+    opacity: 0.9;
+  }
+}
+
+.submitBtn {
+  @include button-reset;
+  flex: 2;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-warning 0%, #ff9c3e 100%);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

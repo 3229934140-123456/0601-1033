@@ -1,0 +1,206 @@
+@use '@/styles/variables.scss' as *;
+
+.fuelingAddPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 180rpx;
+}
+
+.formSection {
+  background: $color-bg-card;
+  margin: $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.formGroup {
+  margin-bottom: $spacing-lg;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  font-weight: $font-weight-medium;
+}
+
+.formInput {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.formInputText {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.formInputPlaceholder {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.formTextarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  line-height: $line-height-loose;
+}
+
+.typeSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.typeOption {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-button;
+  background: $color-bg-hover;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.amountRow {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.amountItem {
+  flex: 1;
+}
+
+.photoSection {
+  background: $color-bg-card;
+  margin: 0 $page-padding $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+}
+
+.photoItem {
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  position: relative;
+}
+
+.photoAdd {
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  border: 2rpx dashed $color-border;
+  transition: all $transition-base;
+
+  &:active {
+    background: $color-border;
+  }
+}
+
+.photoAddIcon {
+  font-size: 56rpx;
+  color: $color-text-tertiary;
+}
+
+.photoAddText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.photoDelete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+  background: rgba(0, 0, 0, 0.5);
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.cancelBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+
+  &:active {
+    background: $color-border;
+    opacity: 0.9;
+  }
+}
+
+.submitBtn {
+  @include button-reset;
+  flex: 2;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-button;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

@@ -1,0 +1,35 @@
+@use '@/styles/variables.scss' as *;
+
+.statusTag {
+  display: inline-block;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+
+  &.primary {
+    background: rgba(0, 102, 204, 0.1);
+    color: $color-primary;
+  }
+
+  &.success {
+    background: rgba(0, 180, 42, 0.1);
+    color: $color-success;
+  }
+
+  &.warning {
+    background: rgba(255, 125, 0, 0.1);
+    color: $color-warning;
+  }
+
+  &.error {
+    background: rgba(245, 63, 63, 0.1);
+    color: $color-error;
+  }
+
+  &.default {
+    background: $color-bg-hover;
+    color: $color-text-secondary;
+  }
+}

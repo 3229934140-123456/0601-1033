@@ -1,0 +1,169 @@
+@use '@/styles/variables.scss' as *;
+
+.fuelingPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  margin: $page-padding;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+.summaryTitle {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: $spacing-md;
+}
+
+.summaryStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.summaryValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.summaryUnit {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.summaryDivider {
+  width: 2rpx;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.listSection {
+  padding: 0 $page-padding;
+}
+
+.recordCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: $shadow-card-hover;
+  }
+}
+
+.recordHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.recordDate {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.fuelTypeTag {
+  padding: 6rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  background: rgba(0, 102, 204, 0.1);
+  color: $color-primary;
+}
+
+.recordInfo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.infoLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.infoAmount {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.recordFooter {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 2rpx solid $color-divider;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recordRemark {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  @include text-ellipsis;
+}
+
+.photoIndicator {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.fabButton {
+  position: fixed;
+  right: $page-padding;
+  bottom: 180rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: $radius-round;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  box-shadow: 0 8rpx 24rpx rgba(0, 102, 204, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+  z-index: 100;
+
+  &:active {
+    transform: scale(0.92);
+  }
+}
+
+.fabIcon {
+  font-size: 56rpx;
+  color: $color-text-white;
+  font-weight: $font-weight-light;
+}

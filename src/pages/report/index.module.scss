@@ -1,0 +1,291 @@
+@use '@/styles/variables.scss' as *;
+
+.reportPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: $spacing-xl;
+}
+
+.section {
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-lg;
+}
+
+.statsOverview {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  margin: $page-padding;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}
+
+.overviewTitle {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: $spacing-lg;
+}
+
+.overviewStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-lg;
+}
+
+.overviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.overviewValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+}
+
+.overviewUnit {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.comparisonCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.comparisonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.comparisonTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.comparisonRows {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.comparisonRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rowLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+}
+
+.rowBars {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  height: 40rpx;
+}
+
+.barContainer {
+  flex: 1;
+  height: 16rpx;
+  background: $color-bg-hover;
+  border-radius: $radius-round;
+  overflow: hidden;
+  position: relative;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: $radius-round;
+  transition: width $transition-slow;
+
+  &.actual {
+    background: linear-gradient(90deg, $color-primary 0%, $color-primary-light 100%);
+  }
+
+  &.planned {
+    background: linear-gradient(90deg, rgba(0, 102, 204, 0.3) 0%, rgba(0, 102, 204, 0.2) 100%);
+  }
+}
+
+.rowValues {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rpx;
+}
+
+.rowActual {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.rowPlanned {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 2rpx solid $color-divider;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+}
+
+.legendBar {
+  width: 40rpx;
+  height: 12rpx;
+  border-radius: $radius-round;
+
+  &.actual {
+    background: $color-primary;
+  }
+
+  &.planned {
+    background: rgba(0, 102, 204, 0.3);
+  }
+}
+
+.dailyTrendCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.trendChart {
+  margin-top: $spacing-md;
+}
+
+.trendBars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 240rpx;
+  gap: $spacing-xs;
+  padding: $spacing-md 0;
+  border-bottom: 2rpx solid $color-divider;
+}
+
+.trendBarItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.trendBar {
+  width: 100%;
+  max-width: 48rpx;
+  background: linear-gradient(180deg, $color-primary-light 0%, $color-primary 100%);
+  border-radius: $radius-xs $radius-xs 0 0;
+  transition: height $transition-base;
+  position: relative;
+
+  &.abnormal {
+    background: linear-gradient(180deg, #ff9c3e 0%, $color-error 100%);
+  }
+}
+
+.trendBarValue {
+  position: absolute;
+  top: -32rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18rpx;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.trendBarLabel {
+  font-size: 18rpx;
+  color: $color-text-tertiary;
+}
+
+.monthlyReports {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.monthlyCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.monthlyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.monthlyTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.exportBtn {
+  padding: $spacing-xs $spacing-md;
+  background: rgba(0, 102, 204, 0.1);
+  color: $color-primary;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+}
+
+.monthlyStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+}
+
+.monthlyStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.monthlyStatValue {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.monthlyStatLabel {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}
