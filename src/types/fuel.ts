@@ -21,6 +21,8 @@ export interface Voyage {
 
 export type FuelType = '重油' | '轻油' | '柴油' | '润滑油'
 
+export type FuelingReviewStatus = 'pending_review' | 'confirmed' | 'needs_revision'
+
 export interface FuelingRecord {
   id: string
   voyageId: string
@@ -33,6 +35,10 @@ export interface FuelingRecord {
   supplier?: string
   receiptPhotos: string[]
   remark?: string
+  reviewStatus?: FuelingReviewStatus
+  reviewComment?: string
+  reviewer?: string
+  reviewDate?: string
   createdAt: string
 }
 
@@ -70,6 +76,17 @@ export interface ExceptionRecord {
   createdAt: string
 }
 
+export interface VoyageCostAnalysis {
+  totalFuelingAmount: number
+  averageUnitPrice: number
+  costPerMile: number
+  plannedTotalCost: number
+  actualTotalCost: number
+  costDeviation: number
+  costDeviationPercent: number
+  hasData: boolean
+}
+
 export interface VoyageStatistics {
   voyageId: string
   totalFueling: number
@@ -79,6 +96,17 @@ export interface VoyageStatistics {
   plannedConsumptionPerMile: number
   deviation: number
   deviationPercent: number
+  cost: VoyageCostAnalysis
+}
+
+export interface MonthlyVoyageDetail {
+  voyageId: string
+  segment: string
+  departurePort: string
+  arrivalPort: string
+  departureDate: string
+  hasFueling: boolean
+  hasDaily: boolean
 }
 
 export interface MonthlyReport {
@@ -90,4 +118,8 @@ export interface MonthlyReport {
   totalDistance: number
   voyageCount: number
   exceptionCount: number
+  totalFuelingAmount: number
+  averageUnitPrice: number
+  costPerMile: number
+  voyageDetails: MonthlyVoyageDetail[]
 }

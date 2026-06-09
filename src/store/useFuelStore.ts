@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import Taro from '@tarojs/taro'
-import { Ship, Voyage, FuelingRecord, DailyFuelRecord, ExceptionRecord, VoyageStatistics, MonthlyReport } from '@/types/fuel'
+import { Ship, Voyage, FuelingRecord, DailyFuelRecord, ExceptionRecord, VoyageStatistics, MonthlyReport, VoyageCostAnalysis, FuelingReviewStatus } from '@/types/fuel'
 import { mockShips, mockVoyages, mockFuelingRecords, mockDailyRecords, mockExceptionRecords, mockMonthlyReports } from '@/data/mockData'
 
 const STORAGE_KEY = 'fuel_records_v1'
@@ -28,8 +28,11 @@ interface FuelState {
   addDailyRecord: (record: Omit<DailyFuelRecord, 'id' | 'createdAt'>) => void
   addExceptionRecord: (record: Omit<ExceptionRecord, 'id' | 'createdAt' | 'status' | 'reviewer' | 'reviewComment' | 'reviewDate'>) => void
   reviewExceptionRecord: (id: string, status: 'approved' | 'rejected' | 'reviewing', reviewComment: string, reviewer?: string) => void
+  reviewFuelingRecord: (id: string, status: FuelingReviewStatus, reviewComment: string, reviewer?: string) => void
   getVoyageStatistics: (voyageId?: string) => VoyageStatistics | null
+  getVoyageCostAnalysis: (voyageId?: string) => VoyageCostAnalysis | null
   getMonthlyReport: (month: string, shipName: string) => MonthlyReport | null
+  getAvailableMonths: (shipName?: string) => string[]
   getFuelPrediction: (voyageId?: string) => { remainingDistance: number; dailyAvgConsumption: number; estimatedArrivalFuel: number; riskLevel: 'safe' | 'warning' | 'danger' | 'insufficient' } | null
 }
 
@@ -103,6 +106,7 @@ export const useFuelStore = create<FuelState>((set, get) => ({
     const newRecord: FuelingRecord = {
       ...record,
       id: `f${Date.now()}`,
+      reviewStatus: 'pending_review',
       createdAt: new Date().toLocaleString()
     }
     console.log('[FuelStore] Adding fueling record:', newRecord)
@@ -178,6 +182,106 @@ export const useFuelStore = create<FuelState>((set, get) => ({
     get().persistToStorage()
   },
 
+  reviewFuelingRecord: (id, status, reviewComment, reviewer = '机务主管') => {
+    console.log('[FuelStore] Reviewing fueling record:', { id, status, reviewComment })
+    set((state) => ({
+      fuelingRecords: state.fuelingRecords.map(r =>
+        r.id === id
+          ? {
+              ...r,
+              reviewStatus: status,
+              reviewer,
+              reviewComment,
+              reviewDate: new Date().toISOString().split('T')[0]
+            }
+          : r
+      )
+    }))
+    get().persistToStorage()
+  },
+
+  getAvailableMonths: (shipName) => {
+    const state = get()
+    const shipVoyageIds = shipName
+      ? state.voyages.filter(v => v.shipName === shipName).map(v => v.id)
+      : state.voyages.map(v => v.id)
+
+    const months = new Set<string>()
+
+    state.voyages.forEach(v => {
+      if (!shipName || v.shipName === shipName) {
+        if (v.departureDate) months.add(v.departureDate.slice(0, 7))
+        if (v.estimatedArrivalDate) months.add(v.estimatedArrivalDate.slice(0, 7))
+      }
+    })
+    state.fuelingRecords.forEach(r => {
+      if (!shipName || shipVoyageIds.includes(r.voyageId)) {
+        if (r.date) months.add(r.date.slice(0, 7))
+      }
+    })
+    state.dailyRecords.forEach(r => {
+      if (!shipName || shipVoyageIds.includes(r.voyageId)) {
+        if (r.date) months.add(r.date.slice(0, 7))
+      }
+    })
+    state.exceptionRecords.forEach(r => {
+      if (!shipName || shipVoyageIds.includes(r.voyageId)) {
+        if (r.date) months.add(r.date.slice(0, 7))
+      }
+    })
+
+    return Array.from(months).sort().reverse()
+  },
+
+  getVoyageCostAnalysis: (voyageId) => {
+    const state = get()
+    const vid = voyageId || state.currentVoyageId
+    if (!vid) return null
+
+    const voyage = state.voyages.find(v => v.id === vid)
+    if (!voyage) return null
+
+    const voyageFueling = state.fuelingRecords.filter(r => r.voyageId === vid)
+    const voyageDaily = state.dailyRecords.filter(r => r.voyageId === vid)
+
+    const totalFuelingAmount = voyageFueling.reduce((sum, r) => sum + (r.totalAmount || 0), 0)
+    const totalFuelingQuantity = voyageFueling.reduce((sum, r) => sum + r.quantity, 0)
+    const totalDistance = voyageDaily.reduce((sum, r) => sum + r.distance, 0)
+    const totalConsumption = voyageDaily.reduce((sum, r) => sum + r.totalConsumption, 0)
+
+    if (totalFuelingQuantity === 0 && voyageFueling.length === 0) {
+      return {
+        totalFuelingAmount: 0,
+        averageUnitPrice: 0,
+        costPerMile: 0,
+        plannedTotalCost: 0,
+        actualTotalCost: 0,
+        costDeviation: 0,
+        costDeviationPercent: 0,
+        hasData: false
+      }
+    }
+
+    const averageUnitPrice = totalFuelingQuantity > 0 ? totalFuelingAmount / totalFuelingQuantity : 5200
+    const plannedPerMile = voyage.distance > 0 ? voyage.plannedFuelConsumption / voyage.distance : 0
+    const costPerMile = totalDistance > 0 ? (totalConsumption * averageUnitPrice) / totalDistance : 0
+    const plannedTotalCost = plannedPerMile * averageUnitPrice * (voyage.distance || 0)
+    const actualTotalCost = totalConsumption * averageUnitPrice
+    const costDeviation = actualTotalCost - plannedTotalCost
+    const costDeviationPercent = plannedTotalCost > 0 ? (costDeviation / plannedTotalCost) * 100 : 0
+
+    return {
+      totalFuelingAmount: Number(totalFuelingAmount.toFixed(2)),
+      averageUnitPrice: Number(averageUnitPrice.toFixed(2)),
+      costPerMile: Number(costPerMile.toFixed(2)),
+      plannedTotalCost: Number(plannedTotalCost.toFixed(2)),
+      actualTotalCost: Number(actualTotalCost.toFixed(2)),
+      costDeviation: Number(costDeviation.toFixed(2)),
+      costDeviationPercent: Number(costDeviationPercent.toFixed(1)),
+      hasData: true
+    }
+  },
+
   getFuelPrediction: (voyageId?: string) => {
     const state = get()
     const vid = voyageId || state.currentVoyageId
@@ -251,6 +355,17 @@ export const useFuelStore = create<FuelState>((set, get) => ({
       ? (deviation / plannedConsumptionPerMile) * 100
       : 0
 
+    const cost = state.getVoyageCostAnalysis(vid) || {
+      totalFuelingAmount: 0,
+      averageUnitPrice: 0,
+      costPerMile: 0,
+      plannedTotalCost: 0,
+      actualTotalCost: 0,
+      costDeviation: 0,
+      costDeviationPercent: 0,
+      hasData: false
+    }
+
     const stats: VoyageStatistics = {
       voyageId: vid,
       totalFueling: Number(totalFueling.toFixed(2)),
@@ -259,7 +374,8 @@ export const useFuelStore = create<FuelState>((set, get) => ({
       consumptionPerMile: Number(consumptionPerMile.toFixed(3)),
       plannedConsumptionPerMile: Number(plannedConsumptionPerMile.toFixed(3)),
       deviation: Number(deviation.toFixed(3)),
-      deviationPercent: Number(deviationPercent.toFixed(1))
+      deviationPercent: Number(deviationPercent.toFixed(1)),
+      cost
     }
 
     console.log('[FuelStore] Calculated stats for voyage', vid, ':', stats)
@@ -268,7 +384,11 @@ export const useFuelStore = create<FuelState>((set, get) => ({
 
   getMonthlyReport: (month: string, shipName: string): MonthlyReport | null => {
     const state = get()
-    const voyageIds = state.voyages.filter(v => v.shipName === shipName).map(v => v.id)
+    const shipVoyages = state.voyages.filter(v => v.shipName === shipName)
+    const relevantVoyages = shipVoyages.filter(v =>
+      v.departureDate.startsWith(month) || v.estimatedArrivalDate.startsWith(month)
+    )
+    const voyageIds = relevantVoyages.map(v => v.id)
 
     const monthFueling = state.fuelingRecords.filter(
       r => voyageIds.includes(r.voyageId) && r.date.startsWith(month)
@@ -283,12 +403,21 @@ export const useFuelStore = create<FuelState>((set, get) => ({
     const totalFueling = monthFueling.reduce((sum, r) => sum + r.quantity, 0)
     const totalConsumption = monthDaily.reduce((sum, r) => sum + r.totalConsumption, 0)
     const totalDistance = monthDaily.reduce((sum, r) => sum + r.distance, 0)
-    const averageConsumptionPerMile = totalDistance > 0 ? totalConsumption / totalDistance : 0
+    const totalFuelingAmount = monthFueling.reduce((sum, r) => sum + (r.totalAmount || 0), 0)
+    const averageUnitPrice = totalFueling > 0 ? totalFuelingAmount / totalFueling : 0
+    const costPerMile = totalDistance > 0 ? (totalConsumption * averageUnitPrice) / totalDistance : 0
 
-    const uniqueVoyageIds = new Set([
-      ...monthFueling.map(r => r.voyageId),
-      ...monthDaily.map(r => r.voyageId)
-    ])
+    const voyageDetails = relevantVoyages.map(v => ({
+      voyageId: v.id,
+      segment: `${v.departurePort}→${v.arrivalPort}`,
+      departurePort: v.departurePort,
+      arrivalPort: v.arrivalPort,
+      departureDate: v.departureDate,
+      hasFueling: state.fuelingRecords.some(r => r.voyageId === v.id),
+      hasDaily: state.dailyRecords.some(r => r.voyageId === v.id)
+    }))
+
+    const averageConsumptionPerMile = totalDistance > 0 ? totalConsumption / totalDistance : 0
 
     return {
       month,
@@ -298,7 +427,11 @@ export const useFuelStore = create<FuelState>((set, get) => ({
       averageConsumptionPerMile: Number(averageConsumptionPerMile.toFixed(3)),
       totalDistance: Number(totalDistance.toFixed(0)),
       voyageCount: uniqueVoyageIds.size,
-      exceptionCount: monthExceptions.length
+      exceptionCount: monthExceptions.length,
+      totalFuelingAmount: Number(totalFuelingAmount.toFixed(2)),
+      averageUnitPrice: Number(averageUnitPrice.toFixed(2)),
+      costPerMile: Number(costPerMile.toFixed(2)),
+      voyageDetails
     }
   }
 }))

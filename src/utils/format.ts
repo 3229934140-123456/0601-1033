@@ -56,3 +56,21 @@ export const getExceptionTypeText = (type: string): string => {
   }
   return map[type] || type
 }
+
+export const getFuelingReviewStatusText = (status?: string): string => {
+  const map: Record<string, string> = {
+    pending_review: '待复核',
+    confirmed: '已确认',
+    needs_revision: '需修改'
+  }
+  return map[status || ''] || '待复核'
+}
+
+export const getFuelingReviewStatusColor = (status?: string): 'primary' | 'success' | 'warning' | 'error' => {
+  const map: Record<string, 'primary' | 'success' | 'warning' | 'error'> = {
+    pending_review: 'primary',
+    confirmed: 'success',
+    needs_revision: 'error'
+  }
+  return map[status || ''] || 'primary'
+}

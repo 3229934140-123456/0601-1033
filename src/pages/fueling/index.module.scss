@@ -167,3 +167,190 @@
   color: $color-text-white;
   font-weight: $font-weight-light;
 }
+
+.summaryValueWarn {
+  color: #FFDD33 !important;
+}
+
+.recordHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.reviewInfo {
+  margin-top: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(255, 251, 230, 0.6);
+  border-radius: $radius-md;
+  border: 1rpx solid #FFF0B6;
+}
+
+.reviewLabel {
+  display: block;
+  font-size: $font-size-xs;
+  color: #8C6D1F;
+  font-weight: $font-weight-medium;
+  margin-bottom: 4rpx;
+}
+
+.reviewComment {
+  display: block;
+  font-size: $font-size-xs;
+  color: #5C4A15;
+  line-height: 1.6;
+}
+
+.recordActions {
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 2rpx solid $color-divider;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reviewBtn {
+  padding: 12rpx 32rpx;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  background: rgba(0, 102, 204, 0.08);
+  border-radius: $radius-md;
+  font-weight: $font-weight-medium;
+}
+
+.modalMask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modalSheet {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.modalTitle {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.modalClose {
+  font-size: 28px;
+  color: #0066CC;
+}
+
+.modalContent {
+  flex: 1;
+  padding: 32px;
+}
+
+.modalActions {
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px 48px;
+  border-top: 1px solid #F0F2F5;
+}
+
+.modalBtnSecondary {
+  flex: 1;
+  padding: 24px;
+  border-radius: 12px;
+  background: #F0F2F5;
+  text-align: center;
+  font-size: 28px;
+  color: #1A1A1A;
+}
+
+.modalBtnPrimary {
+  flex: 1;
+  padding: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0066CC 0%, #0099FF 100%);
+  text-align: center;
+  font-size: 28px;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.reviewRecordInfo {
+  background: #F5F9FF;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.reviewRecordRow {
+  display: block;
+  font-size: 26px;
+  color: #1A1A1A;
+  line-height: 1.8;
+}
+
+.formBlock {
+  margin-bottom: 32px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 28px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 16px;
+}
+
+.statusOptions {
+  display: flex;
+  gap: 16px;
+}
+
+.statusOption {
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  background: #F7F8FA;
+  border: 2rpx solid transparent;
+  text-align: center;
+}
+
+.statusOptionActive {
+  background: #E6F2FF;
+  border-color: #0066CC;
+}
+
+.statusOptionText {
+  font-size: 26px;
+  color: #4E5969;
+}
+
+.statusOptionTextActive {
+  color: #0066CC;
+  font-weight: 500;
+}
+
+.formTextarea {
+  width: 100%;
+  min-height: 180rpx;
+  padding: 20px;
+  border-radius: 12px;
+  background: #F7F8FA;
+  font-size: 28px;
+  color: #1A1A1A;
+  border: none;
+  outline: none;
+}

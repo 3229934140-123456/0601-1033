@@ -562,3 +562,183 @@
   color: #FFFFFF;
   font-weight: 500;
 }
+
+.costCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.costOverview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.costItem {
+  text-align: center;
+  padding: $spacing-md;
+  background: linear-gradient(180deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 102, 204, 0.02) 100%);
+  border-radius: $radius-md;
+}
+
+.costValue {
+  display: block;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin-bottom: 4rpx;
+}
+
+.costLabel {
+  display: block;
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  line-height: 1.4;
+}
+
+.costCompare {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  border: 1rpx solid #F0F2F5;
+}
+
+.costCompareTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  display: block;
+}
+
+.costCompareRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 0;
+}
+
+.costCompareLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.costCompareValue {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.costOver {
+  color: #F5222D;
+}
+
+.costUnder {
+  color: #52C41A;
+}
+
+.noDataCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-xxl 0;
+  text-align: center;
+  box-shadow: $shadow-card;
+}
+
+.noDataText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.monthlyCostStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg $spacing-md;
+}
+
+.monthlyCostItem {
+  text-align: center;
+  padding: $spacing-sm;
+  background: rgba(0, 102, 204, 0.04);
+  border-radius: $radius-md;
+}
+
+.monthlyCostValue {
+  display: block;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+}
+
+.monthlyCostLabel {
+  display: block;
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.voyageDetailList {
+  margin: 0 $spacing-lg $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid #F0F2F5;
+}
+
+.voyageDetailTitle {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.voyageDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid #F5F7FA;
+}
+
+.voyageDetailMain {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.voyageDetailSegment {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.voyageDetailDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.voyageDetailBadges {
+  display: flex;
+  gap: $spacing-xs;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  font-size: 20rpx;
+  border-radius: $radius-sm;
+  line-height: 1.4;
+}
+
+.badgeOk {
+  background: #F6FFED;
+  color: #52C41A;
+}
+
+.badgeWarn {
+  background: #FFF7E6;
+  color: #FA8C16;
+}

@@ -74,6 +74,10 @@ export const mockFuelingRecords: FuelingRecord[] = [
     supplier: '中石化燃供',
     receiptPhotos: [],
     remark: '首航加满',
+    reviewStatus: 'confirmed',
+    reviewComment: '油价合理，单据齐全',
+    reviewer: '机务主管',
+    reviewDate: '2026-06-02',
     createdAt: '2026-06-01 08:30:00'
   },
   {
@@ -87,6 +91,10 @@ export const mockFuelingRecords: FuelingRecord[] = [
     supplyPort: '香港锚地',
     supplier: '香港燃油供应',
     receiptPhotos: [],
+    reviewStatus: 'pending_review',
+    reviewComment: '',
+    reviewer: '',
+    reviewDate: '',
     remark: '',
     createdAt: '2026-06-05 14:20:00'
   }

@@ -1,15 +1,13 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { View, Text, ScrollView, Picker } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
 import SectionHeader from '@/components/SectionHeader'
 import StatusTag from '@/components/StatusTag'
-import { formatNumber, formatCurrency, getExceptionStatusText, getExceptionTypeText } from '@/utils/format'
+import { formatNumber, formatCurrency, getExceptionStatusText, getExceptionTypeText, getFuelingReviewStatusText } from '@/utils/format'
 import dayjs from 'dayjs'
 import classnames from 'classnames'
-
-const MONTH_OPTIONS = ['2026-01', '2026-02', '2026-03', '2026-04', '2026-05', '2026-06']
 
 const ReportPage: React.FC = () => {
   const {
@@ -18,6 +16,7 @@ const ReportPage: React.FC = () => {
     getVoyageStatistics,
     getMonthlyReport,
     getFuelPrediction,
+    getAvailableMonths,
     ships,
     voyages,
     fuelingRecords,
@@ -46,6 +45,18 @@ const ReportPage: React.FC = () => {
     }
     return fromVoyage || ships[0]
   }, [ships, currentVoyage, selectedShip])
+
+  const availableMonths = useMemo(() => {
+    const months = getAvailableMonths(currentShip?.name)
+    if (months.length === 0) months.push(dayjs().format('YYYY-MM'))
+    return months
+  }, [getAvailableMonths, currentShip, refreshVersion])
+
+  useEffect(() => {
+    if (availableMonths.length > 0 && !availableMonths.includes(selectedMonth)) {
+      setSelectedMonth(availableMonths[0])
+    }
+  }, [availableMonths, selectedMonth])
 
   const voyageStats = useMemo(() => {
     return getVoyageStatistics(currentVoyageId)
@@ -121,37 +132,47 @@ const ReportPage: React.FC = () => {
       text += `  总油耗：${formatNumber(report.totalConsumption)} 吨\n`
       text += `  平均单位耗油：${formatNumber(report.averageConsumptionPerMile, 3)} 吨/海里\n`
       text += `  异常记录：${report.exceptionCount} 条\n`
+      text += `\n`
+      text += `  ── 成本数据 ──\n`
+      text += `  加油总金额：${formatCurrency(report.totalFuelingAmount)}\n`
+      text += `  平均油价：${formatCurrency(report.averageUnitPrice)} 元/吨\n`
+      text += `  每海里燃油成本：${formatCurrency(report.costPerMile)} 元/海里\n`
     } else {
       text += `  暂无数据\n`
     }
     text += `\n`
 
     text += `【二、航次汇总】\n`
-    const monthVoyages = voyages.filter(
-      v => v.shipName === shipName && (v.departureDate.startsWith(month) || v.estimatedArrivalDate.startsWith(month))
-    )
-    if (monthVoyages.length === 0) {
-      text += `  本月无相关航次\n`
-    } else {
-      monthVoyages.forEach((v, i) => {
-        const vFueling = fuelingRecords.filter(r => r.voyageId === v.id).reduce((s, r) => s + r.quantity, 0)
-        const vDaily = dailyRecords.filter(r => r.voyageId === v.id)
-        const vConsumption = vDaily.reduce((s, r) => s + r.totalConsumption, 0)
-        const vDistance = vDaily.reduce((s, r) => s + r.distance, 0)
-        text += `  ${i + 1}. ${v.departurePort} → ${v.arrivalPort}\n`
-        text += `     出港：${v.departureDate}  预计到港：${v.estimatedArrivalDate}  总里程：${v.distance}海里\n`
-        text += `     本航次加油：${formatNumber(vFueling)}吨  已消耗：${formatNumber(vConsumption)}吨  已航行：${formatNumber(vDistance)}海里\n`
+    if (report?.voyageDetails && report.voyageDetails.length > 0) {
+      report.voyageDetails.forEach((v, i) => {
+        const dataFlags = []
+        if (!v.hasFueling) dataFlags.push('缺加油记录')
+        if (!v.hasDaily) dataFlags.push('缺日耗记录')
+        text += `  ${i + 1}. ${v.segment}\n`
+        text += `     出港：${v.departureDate}\n`
+        if (dataFlags.length > 0) {
+          text += `     ⚠️ 数据不完整：${dataFlags.join('、')}\n`
+        } else {
+          text += `     ✓ 加油与日耗数据完整\n`
+        }
       })
+    } else {
+      text += `  本月无相关航次\n`
     }
     text += `\n`
 
-    text += `【三、加油明细】\n`
+    text += `【三、加油明细及复核】\n`
     if (monthFuelingRecords.length === 0) {
       text += `  （本月无加油记录）\n`
     } else {
       monthFuelingRecords.forEach((r, i) => {
         text += `  ${i + 1}. ${r.date}  ${r.fuelType}  ${formatNumber(r.quantity)}吨  ${formatCurrency(r.unitPrice)}/吨\n`
         text += `     供应港：${r.supplyPort}  金额：${formatCurrency(r.totalAmount)}\n`
+        text += `     复核状态：${getFuelingReviewStatusText(r.reviewStatus)}`
+        if (r.reviewComment && r.reviewer) {
+          text += `  ${r.reviewer}（${r.reviewDate}）：${r.reviewComment}`
+        }
+        text += `\n`
         if (r.remark) text += `     备注：${r.remark}\n`
       })
     }
@@ -309,6 +330,50 @@ const ReportPage: React.FC = () => {
       </View>
 
       <View className={styles.section}>
+        <SectionHeader title="成本分析" />
+        {voyageStats?.cost?.hasData ? (
+          <View className={styles.costCard}>
+            <View className={styles.costOverview}>
+              <View className={styles.costItem}>
+                <Text className={styles.costValue}>{formatCurrency(voyageStats.cost.totalFuelingAmount)}</Text>
+                <Text className={styles.costLabel}>本航次加油总金额</Text>
+              </View>
+              <View className={styles.costItem}>
+                <Text className={styles.costValue}>{formatCurrency(voyageStats.cost.averageUnitPrice)}</Text>
+                <Text className={styles.costLabel}>平均油价 (元/吨)</Text>
+              </View>
+              <View className={styles.costItem}>
+                <Text className={styles.costValue}>{formatCurrency(voyageStats.cost.costPerMile)}</Text>
+                <Text className={styles.costLabel}>每海里燃油成本</Text>
+              </View>
+            </View>
+            <View className={styles.costCompare}>
+              <Text className={styles.costCompareTitle}>计划 vs 实际成本对比</Text>
+              <View className={styles.costCompareRow}>
+                <Text className={styles.costCompareLabel}>计划成本</Text>
+                <Text className={styles.costCompareValue}>{formatCurrency(voyageStats.cost.plannedTotalCost)}</Text>
+              </View>
+              <View className={styles.costCompareRow}>
+                <Text className={styles.costCompareLabel}>实际成本</Text>
+                <Text className={styles.costCompareValue}>{formatCurrency(voyageStats.cost.actualTotalCost)}</Text>
+              </View>
+              <View className={styles.costCompareRow}>
+                <Text className={styles.costCompareLabel}>成本差异</Text>
+                <Text className={classnames(styles.costCompareValue, voyageStats.cost.costDeviation > 0 ? styles.costOver : styles.costUnder)}>
+                  {voyageStats.cost.costDeviation >= 0 ? '+' : ''}{formatCurrency(voyageStats.cost.costDeviation)}
+                  ({voyageStats.cost.costDeviationPercent >= 0 ? '+' : ''}{voyageStats.cost.costDeviationPercent}%)
+                </Text>
+              </View>
+            </View>
+          </View>
+        ) : (
+            <View className={styles.noDataCard}>
+              <Text className={styles.noDataText}>暂无成本数据，请先添加加油记录</Text>
+            </View>
+          )}
+      </View>
+
+      <View className={styles.section}>
         <SectionHeader title="计划 vs 实际对比" />
         <View className={styles.comparisonCard}>
           <View className={styles.comparisonRows}>
@@ -395,9 +460,9 @@ const ReportPage: React.FC = () => {
           </View>
           <Picker
             mode="selector"
-            range={MONTH_OPTIONS}
-            value={MONTH_OPTIONS.indexOf(selectedMonth)}
-            onChange={(e) => setSelectedMonth(MONTH_OPTIONS[e.detail.value])}
+            range={availableMonths}
+            value={Math.max(availableMonths.indexOf(selectedMonth), 0)}
+            onChange={(e) => setSelectedMonth(availableMonths[e.detail.value])}
           >
             <View className={styles.filterItem}>
               <Text className={styles.filterLabel}>月份</Text>
@@ -434,6 +499,47 @@ const ReportPage: React.FC = () => {
                   <Text className={styles.monthlyStatLabel}>异常数</Text>
                 </View>
               </View>
+
+              <View className={styles.monthlyCostStats}>
+                <View className={styles.monthlyCostItem}>
+                  <Text className={styles.monthlyCostValue}>{formatCurrency(currentMonthlyReport.totalFuelingAmount)}</Text>
+                  <Text className={styles.monthlyCostLabel}>加油总金额</Text>
+                </View>
+                <View className={styles.monthlyCostItem}>
+                  <Text className={styles.monthlyCostValue}>{formatCurrency(currentMonthlyReport.averageUnitPrice)}</Text>
+                  <Text className={styles.monthlyCostLabel}>平均油价(元/吨)</Text>
+                </View>
+                <View className={styles.monthlyCostItem}>
+                  <Text className={styles.monthlyCostValue}>{formatCurrency(currentMonthlyReport.costPerMile)}</Text>
+                  <Text className={styles.monthlyCostLabel}>每海里成本</Text>
+                </View>
+              </View>
+
+              {currentMonthlyReport.voyageDetails && currentMonthlyReport.voyageDetails.length > 0 && (
+                <View className={styles.voyageDetailList}>
+                  <Text className={styles.voyageDetailTitle}>本月航次明细</Text>
+                  {currentMonthlyReport.voyageDetails.map(v => (
+                    <View key={v.voyageId} className={styles.voyageDetailItem}>
+                      <View className={styles.voyageDetailMain}>
+                        <Text className={styles.voyageDetailSegment}>{v.segment}</Text>
+                        <Text className={styles.voyageDetailDate}>{v.departureDate}</Text>
+                      </View>
+                      <View className={styles.voyageDetailBadges}>
+                        {v.hasFueling ? (
+                          <Text className={`${styles.badge} ${styles.badgeOk}`}>✓ 有加油</Text>
+                        ) : (
+                          <Text className={`${styles.badge} ${styles.badgeWarn}`}>! 缺加油</Text>
+                        )}
+                        {v.hasDaily ? (
+                          <Text className={`${styles.badge} ${styles.badgeOk}`}>✓ 有日耗</Text>
+                        ) : (
+                          <Text className={`${styles.badge} ${styles.badgeWarn}`}>! 缺日耗</Text>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
 
               {monthExceptions.length > 0 && (
                 <View className={styles.exceptionList}>
