@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
 import EmptyState from '@/components/EmptyState'
@@ -20,6 +20,11 @@ const TAB_LIST = [
 const ExceptionPage: React.FC = () => {
   const { exceptionRecords, currentVoyageId } = useFuelStore()
   const [activeTab, setActiveTab] = useState<string>('all')
+  const [, forceUpdate] = useState(0)
+
+  useDidShow(() => {
+    forceUpdate(n => n + 1)
+  })
 
   const voyageRecords = useMemo(() => {
     return exceptionRecords

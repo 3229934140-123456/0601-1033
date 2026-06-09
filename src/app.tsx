@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
 import { useDidShow, useDidHide } from '@tarojs/taro';
-// 全局样式
+import { useFuelStore } from '@/store/useFuelStore';
 import './app.scss';
 
 function App(props) {
-  // 可以使用所有的 React Hooks
-  useEffect(() => {});
+  const initFromStorage = useFuelStore(s => s.initFromStorage)
 
-  // 对应 onShow
-  useDidShow(() => {});
+  useEffect(() => {
+    console.log('[App] Mounted, initializing store from storage...')
+    initFromStorage()
+  }, [initFromStorage]);
 
-  // 对应 onHide
+  useDidShow(() => {
+    console.log('[App] onShow, re-syncing storage...')
+    initFromStorage()
+  });
+
   useDidHide(() => {});
 
   return props.children;

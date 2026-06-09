@@ -1,26 +1,46 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
 import StatCard from '@/components/StatCard'
 import SectionHeader from '@/components/SectionHeader'
+import VoyageSelector from '@/components/VoyageSelector'
 import { formatNumber, getStatusText } from '@/utils/format'
 
 const HomePage: React.FC = () => {
-  const { voyages, currentVoyageId, dailyRecords, fuelingRecords, voyageStatistics, ships } = useFuelStore()
+  const {
+    voyages,
+    currentVoyageId,
+    dailyRecords,
+    ships,
+    getVoyageStatistics
+  } = useFuelStore()
+
+  const [showSelector, setShowSelector] = useState(false)
+  const [selectorMode, setSelectorMode] = useState<'ship' | 'voyage' | 'all'>('all')
+  const [, forceUpdate] = useState(0)
+
+  useDidShow(() => {
+    console.log('[HomePage] onShow, force refresh')
+    forceUpdate(n => n + 1)
+  })
 
   const currentVoyage = useMemo(() => {
     return voyages.find(v => v.id === currentVoyageId) || voyages[0]
   }, [voyages, currentVoyageId])
 
   const currentShip = useMemo(() => {
-    return ships.find(s => s.id === currentVoyage?.shipId) || ships[0]
+    return ships.find(s => s.name === currentVoyage?.shipName) || ships[0]
   }, [ships, currentVoyage])
 
   const voyageDailyRecords = useMemo(() => {
     return dailyRecords.filter(d => d.voyageId === currentVoyageId)
   }, [dailyRecords, currentVoyageId])
+
+  const voyageStats = useMemo(() => {
+    return getVoyageStatistics(currentVoyageId)
+  }, [getVoyageStatistics, currentVoyageId, dailyRecords.length, forceUpdate()])
 
   const missingDates = useMemo(() => {
     if (!currentVoyage) return []
@@ -38,11 +58,21 @@ const HomePage: React.FC = () => {
   }, [currentVoyage, voyageDailyRecords])
 
   const progressPercent = useMemo(() => {
-    if (!currentVoyage || !voyageStatistics) return 40
+    if (!currentVoyage || !voyageStats) return 40
     const totalDistance = currentVoyage.distance
-    const sailedDistance = voyageStatistics.totalConsumption / Math.max(voyageStatistics.consumptionPerMile, 0.001)
+    const sailedDistance = voyageStats.totalConsumption / Math.max(voyageStats.consumptionPerMile, 0.001)
     return Math.min(Math.round((sailedDistance / totalDistance) * 100), 95)
-  }, [currentVoyage, voyageStatistics])
+  }, [currentVoyage, voyageStats])
+
+  const handleSelectShip = () => {
+    setSelectorMode('ship')
+    setShowSelector(true)
+  }
+
+  const handleSelectVoyage = () => {
+    setSelectorMode('all')
+    setShowSelector(true)
+  }
 
   const handleQuickAction = (action: string) => {
     console.log('[HomePage] Quick action clicked:', action)
@@ -81,7 +111,7 @@ const HomePage: React.FC = () => {
   return (
     <ScrollView className={styles.homePage} scrollY refresherEnabled>
       <View className={styles.header}>
-        <View className={styles.headerTop}>
+        <View className={styles.headerTop} onClick={handleSelectShip}>
           <View className={styles.shipInfo}>
             <View className={styles.shipAvatar}>
               <Text className={styles.shipAvatarText}>🚢</Text>
@@ -93,9 +123,11 @@ const HomePage: React.FC = () => {
           </View>
           <Text className={styles.statusBadge}>{getStatusText(currentVoyage.status)}</Text>
         </View>
-        <View className={styles.voyageSelector}>
+        <View className={styles.voyageSelector} onClick={handleSelectVoyage}>
           <View className={styles.voyageInfo}>
-            <Text className={styles.voyageSegment}>{currentVoyage.segment}</Text>
+            <Text className={styles.voyageSegment}>
+              {currentVoyage.departurePort} → {currentVoyage.arrivalPort}
+            </Text>
             <Text className={styles.voyageDate}>{currentVoyage.departureDate} ~ {currentVoyage.estimatedArrivalDate}</Text>
           </View>
           <Text className={styles.selectorArrow}>▼</Text>
@@ -135,26 +167,26 @@ const HomePage: React.FC = () => {
         <View className={styles.statsGrid}>
           <StatCard
             title="累计加油"
-            value={formatNumber(voyageStatistics?.totalFueling || 0)}
+            value={formatNumber(voyageStats?.totalFueling || 0)}
             unit="吨"
             highlight
           />
           <StatCard
             title="已消耗"
-            value={formatNumber(voyageStatistics?.totalConsumption || 0)}
+            value={formatNumber(voyageStats?.totalConsumption || 0)}
             unit="吨"
           />
           <StatCard
             title="剩余油量"
-            value={formatNumber(voyageStatistics?.remainingFuel || 0)}
+            value={formatNumber(voyageStats?.remainingFuel || 0)}
             unit="吨"
           />
           <StatCard
             title="单位里程耗油"
-            value={formatNumber(voyageStatistics?.consumptionPerMile || 0, 3)}
+            value={formatNumber(voyageStats?.consumptionPerMile || 0, 3)}
             unit="吨/海里"
-            trend={voyageStatistics?.deviationPercent && voyageStatistics.deviationPercent < 0 ? 'down' : 'up'}
-            trendValue={voyageStatistics?.deviationPercent ? `${voyageStatistics.deviationPercent > 0 ? '+' : ''}${voyageStatistics.deviationPercent.toFixed(1)}%` : ''}
+            trend={voyageStats?.deviationPercent && voyageStats.deviationPercent < 0 ? 'down' : 'up'}
+            trendValue={voyageStats?.deviationPercent ? `${voyageStats.deviationPercent > 0 ? '+' : ''}${voyageStats.deviationPercent.toFixed(1)}%` : ''}
           />
         </View>
 
@@ -201,6 +233,12 @@ const HomePage: React.FC = () => {
           </View>
         </View>
       </View>
+
+      <VoyageSelector
+        visible={showSelector}
+        onClose={() => setShowSelector(false)}
+        mode={selectorMode}
+      />
     </ScrollView>
   )
 }

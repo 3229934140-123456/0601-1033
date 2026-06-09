@@ -289,3 +289,83 @@
   font-size: 20rpx;
   color: $color-text-tertiary;
 }
+
+.modalMask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modalSheet {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.modalTitle {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.modalClose {
+  font-size: 28px;
+  color: #0066CC;
+}
+
+.modalContent {
+  flex: 1;
+  padding: 32px;
+  max-height: 800px;
+}
+
+.reportText {
+  font-family: 'Courier New', monospace;
+  font-size: 22px;
+  line-height: 1.8;
+  color: #1A1A1A;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.modalActions {
+  display: flex;
+  gap: 24px;
+  padding: 24px 32px 48px;
+  border-top: 1px solid #F0F2F5;
+}
+
+.modalBtnSecondary {
+  flex: 1;
+  padding: 24px;
+  border-radius: 12px;
+  background: #F0F2F5;
+  text-align: center;
+  font-size: 28px;
+  color: #1A1A1A;
+}
+
+.modalBtnPrimary {
+  flex: 1;
+  padding: 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0066CC 0%, #0099FF 100%);
+  text-align: center;
+  font-size: 28px;
+  color: #FFFFFF;
+  font-weight: 500;
+}

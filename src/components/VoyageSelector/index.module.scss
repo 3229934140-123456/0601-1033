@@ -1,0 +1,96 @@
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 24px 24px 0 0;
+  padding-bottom: 48px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.sheetTitle {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.sheetClose {
+  font-size: 28px;
+  color: #0066CC;
+}
+
+.backBar {
+  padding: 20px 32px;
+  background: #F5F9FF;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.backText {
+  font-size: 26px;
+  color: #0066CC;
+}
+
+.listContainer {
+  flex: 1;
+  max-height: 800px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  padding: 32px;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.listItemActive {
+  background: #F5F9FF;
+}
+
+.itemMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemTitle {
+  font-size: 30px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.itemSub {
+  font-size: 24px;
+  color: #6B7280;
+}
+
+.checkMark {
+  font-size: 32px;
+  color: #0066CC;
+  font-weight: bold;
+  margin-left: 16px;
+}
+
+.emptyState {
+  padding: 80px 32px;
+  text-align: center;
+  color: #6B7280;
+  font-size: 28px;
+}

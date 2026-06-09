@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import styles from './index.module.scss'
 import { useFuelStore } from '@/store/useFuelStore'
 import EmptyState from '@/components/EmptyState'
@@ -19,6 +19,11 @@ interface DayInfo {
 const DailyPage: React.FC = () => {
   const { dailyRecords, currentVoyageId } = useFuelStore()
   const [currentMonth, setCurrentMonth] = useState(dayjs('2026-06-09'))
+  const [, forceUpdate] = useState(0)
+
+  useDidShow(() => {
+    forceUpdate(n => n + 1)
+  })
 
   const voyageRecords = useMemo(() => {
     return dailyRecords
