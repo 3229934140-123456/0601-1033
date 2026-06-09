@@ -27,8 +27,10 @@ interface FuelState {
   addFuelingRecord: (record: Omit<FuelingRecord, 'id' | 'createdAt'>) => void
   addDailyRecord: (record: Omit<DailyFuelRecord, 'id' | 'createdAt'>) => void
   addExceptionRecord: (record: Omit<ExceptionRecord, 'id' | 'createdAt' | 'status' | 'reviewer' | 'reviewComment' | 'reviewDate'>) => void
+  reviewExceptionRecord: (id: string, status: 'approved' | 'rejected' | 'reviewing', reviewComment: string, reviewer?: string) => void
   getVoyageStatistics: (voyageId?: string) => VoyageStatistics | null
   getMonthlyReport: (month: string, shipName: string) => MonthlyReport | null
+  getFuelPrediction: (voyageId?: string) => { remainingDistance: number; dailyAvgConsumption: number; estimatedArrivalFuel: number; riskLevel: 'safe' | 'warning' | 'danger' | 'insufficient' } | null
 }
 
 const loadFromStorage = (): PersistedData | null => {
@@ -156,6 +158,74 @@ export const useFuelStore = create<FuelState>((set, get) => ({
       exceptionRecords: [newRecord, ...state.exceptionRecords]
     }))
     get().persistToStorage()
+  },
+
+  reviewExceptionRecord: (id, status, reviewComment, reviewer = '机务主管') => {
+    console.log('[FuelStore] Reviewing exception:', { id, status, reviewComment })
+    set((state) => ({
+      exceptionRecords: state.exceptionRecords.map(r =>
+        r.id === id
+          ? {
+              ...r,
+              status,
+              reviewer,
+              reviewComment,
+              reviewDate: new Date().toISOString().split('T')[0]
+            }
+          : r
+      )
+    }))
+    get().persistToStorage()
+  },
+
+  getFuelPrediction: (voyageId?: string) => {
+    const state = get()
+    const vid = voyageId || state.currentVoyageId
+    if (!vid) return null
+
+    const voyage = state.voyages.find(v => v.id === vid)
+    if (!voyage) return null
+
+    const voyageFueling = state.fuelingRecords.filter(r => r.voyageId === vid)
+    const voyageDaily = state.dailyRecords.filter(r => r.voyageId === vid)
+
+    const totalFueling = voyageFueling.reduce((sum, r) => sum + r.quantity, 0)
+    const totalConsumption = voyageDaily.reduce((sum, r) => sum + r.totalConsumption, 0)
+    const totalDistance = voyageDaily.reduce((sum, r) => sum + r.distance, 0)
+    const remainingFuel = totalFueling - totalConsumption
+
+    const remainingDistance = Math.max(voyage.distance - totalDistance, 0)
+    const daysCount = voyageDaily.length
+
+    if (totalFueling === 0 || daysCount < 2) {
+      return {
+        remainingDistance: Number(remainingDistance.toFixed(0)),
+        dailyAvgConsumption: 0,
+        estimatedArrivalFuel: 0,
+        riskLevel: 'insufficient' as const
+      }
+    }
+
+    const dailyAvgConsumption = totalConsumption / daysCount
+    const consumptionPerMile = totalDistance > 0 ? totalConsumption / totalDistance : dailyAvgConsumption / 24
+    const estimatedRemainingConsumption = remainingDistance * consumptionPerMile
+    const estimatedArrivalFuel = remainingFuel - estimatedRemainingConsumption
+
+    let riskLevel: 'safe' | 'warning' | 'danger' | 'insufficient'
+    if (estimatedArrivalFuel < 0) {
+      riskLevel = 'danger'
+    } else if (estimatedArrivalFuel < dailyAvgConsumption * 2) {
+      riskLevel = 'warning'
+    } else {
+      riskLevel = 'safe'
+    }
+
+    return {
+      remainingDistance: Number(remainingDistance.toFixed(0)),
+      dailyAvgConsumption: Number(dailyAvgConsumption.toFixed(2)),
+      estimatedArrivalFuel: Number(estimatedArrivalFuel.toFixed(2)),
+      riskLevel
+    }
   },
 
   getVoyageStatistics: (voyageId?: string): VoyageStatistics | null => {

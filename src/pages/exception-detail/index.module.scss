@@ -212,3 +212,70 @@
     transform: scale(0.98);
   }
 }
+
+.reviewFormSection {
+  margin: $spacing-lg $page-padding;
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  border: 2rpx solid $color-warning;
+}
+
+.reviewFormTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+  margin-bottom: $spacing-md;
+}
+
+.reviewActions {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+}
+
+.reviewBtnReject {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-error;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.reviewBtnReview {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-warning;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.reviewBtnApprove {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  background: $color-success;
+  color: $color-text-white;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-button;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

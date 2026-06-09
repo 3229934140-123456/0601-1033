@@ -10,10 +10,10 @@ import classnames from 'classnames'
 interface VoyageSelectorProps {
   visible: boolean
   onClose: () => void
-  mode: 'ship' | 'voyage' | 'all'
+  initialStep: 'ship' | 'voyage'
 }
 
-const VoyageSelector: React.FC<VoyageSelectorProps> = ({ visible, onClose, mode = 'all' }) => {
+const VoyageSelector: React.FC<VoyageSelectorProps> = ({ visible, onClose, initialStep = 'ship' }) => {
   const { ships, voyages, currentVoyageId, setCurrentVoyage } = useFuelStore()
   const currentVoyage = voyages.find(v => v.id === currentVoyageId)
   const currentShip = ships.find(s => s.name === currentVoyage?.shipName)
@@ -23,9 +23,14 @@ const VoyageSelector: React.FC<VoyageSelectorProps> = ({ visible, onClose, mode 
   }, [ships, voyages])
 
   const [selectedShipId, setSelectedShipId] = useState<string | undefined>(currentShip?.id)
-  const [step, setStep] = useState<'ship' | 'voyage'>(
-    mode === 'voyage' ? 'voyage' : 'ship'
-  )
+  const [step, setStep] = useState<'ship' | 'voyage'>(initialStep)
+
+  React.useEffect(() => {
+    if (visible) {
+      setStep(initialStep)
+      setSelectedShipId(currentShip?.id)
+    }
+  }, [visible, initialStep, currentShip])
 
   const selectedShip = useMemo(() => {
     return ships.find(s => s.id === selectedShipId)
@@ -43,7 +48,7 @@ const VoyageSelector: React.FC<VoyageSelectorProps> = ({ visible, onClose, mode 
       Taro.showToast({ title: '该船舶暂无航段', icon: 'none' }).catch(() => {})
       return
     }
-    if (mode === 'ship') {
+    if (initialStep === 'ship') {
       setCurrentVoyage(shipVoyages[0].id)
       Taro.showToast({ title: `已切换至${ship.name}`, icon: 'success' }).catch(() => {})
       onClose()

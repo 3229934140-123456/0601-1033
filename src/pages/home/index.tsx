@@ -14,11 +14,12 @@ const HomePage: React.FC = () => {
     currentVoyageId,
     dailyRecords,
     ships,
-    getVoyageStatistics
+    getVoyageStatistics,
+    getFuelPrediction
   } = useFuelStore()
 
   const [showSelector, setShowSelector] = useState(false)
-  const [selectorMode, setSelectorMode] = useState<'ship' | 'voyage' | 'all'>('all')
+  const [selectorInitialStep, setSelectorInitialStep] = useState<'ship' | 'voyage'>('ship')
   const [refreshVersion, setRefreshVersion] = useState(0)
 
   useDidShow(() => {
@@ -64,13 +65,17 @@ const HomePage: React.FC = () => {
     return Math.min(Math.round((sailedDistance / totalDistance) * 100), 95)
   }, [currentVoyage, voyageStats])
 
+  const fuelPrediction = useMemo(() => {
+    return getFuelPrediction(currentVoyageId)
+  }, [getFuelPrediction, currentVoyageId, dailyRecords.length, refreshVersion])
+
   const handleSelectShip = () => {
-    setSelectorMode('ship')
+    setSelectorInitialStep('ship')
     setShowSelector(true)
   }
 
   const handleSelectVoyage = () => {
-    setSelectorMode('all')
+    setSelectorInitialStep('voyage')
     setShowSelector(true)
   }
 
@@ -190,6 +195,42 @@ const HomePage: React.FC = () => {
           />
         </View>
 
+        {fuelPrediction && fuelPrediction.riskLevel !== 'safe' && (
+          <View className={`${styles.warningCard} ${fuelPrediction.riskLevel === 'insufficient' ? styles.insufficient : fuelPrediction.riskLevel === 'danger' ? styles.danger : styles.warning}`}>
+            <View className={styles.warningHeader}>
+              <Text className={styles.warningIcon}>
+                {fuelPrediction.riskLevel === 'insufficient' ? '📋' : fuelPrediction.riskLevel === 'danger' ? '⛔' : '⚠️'}
+              </Text>
+              <Text className={styles.warningTitle}>
+                {fuelPrediction.riskLevel === 'insufficient' ? '数据不足' : fuelPrediction.riskLevel === 'danger' ? '燃油告急' : '燃油预警'}
+              </Text>
+            </View>
+            <Text className={styles.warningContent}>
+              {fuelPrediction.riskLevel === 'insufficient'
+                ? '暂无足够数据估算，请先添加加油记录和至少2天的日耗数据。'
+                : fuelPrediction.riskLevel === 'danger'
+                  ? `按当前耗油速度，燃油不足以到达目的港！预计缺油 ${formatNumber(Math.abs(fuelPrediction.estimatedArrivalFuel))} 吨，请尽快安排加油。`
+                  : `预计到港剩余燃油 ${formatNumber(fuelPrediction.estimatedArrivalFuel)} 吨，低于2天安全储备（日均 ${formatNumber(fuelPrediction.dailyAvgConsumption)} 吨），请注意。`}
+            </Text>
+            {fuelPrediction.riskLevel !== 'insufficient' && (
+              <View className={styles.warningStats}>
+                <View className={styles.warningStat}>
+                  <Text className={styles.warningStatValue}>{formatNumber(fuelPrediction.remainingDistance)}</Text>
+                  <Text className={styles.warningStatLabel}>剩余航程(海里)</Text>
+                </View>
+                <View className={styles.warningStat}>
+                  <Text className={styles.warningStatValue}>{formatNumber(fuelPrediction.dailyAvgConsumption)}</Text>
+                  <Text className={styles.warningStatLabel}>日均耗油(吨)</Text>
+                </View>
+                <View className={styles.warningStat}>
+                  <Text className={styles.warningStatValue}>{formatNumber(fuelPrediction.estimatedArrivalFuel)}</Text>
+                  <Text className={styles.warningStatLabel}>预计到港剩油(吨)</Text>
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+
         {missingDates.length > 0 && (
           <View className={styles.alertCard}>
             <View className={styles.alertHeader}>
@@ -237,7 +278,7 @@ const HomePage: React.FC = () => {
       <VoyageSelector
         visible={showSelector}
         onClose={() => setShowSelector(false)}
-        mode={selectorMode}
+        initialStep={selectorInitialStep}
       />
     </ScrollView>
   )

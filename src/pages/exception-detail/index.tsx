@@ -18,7 +18,7 @@ const TYPE_OPTIONS: { key: ExceptionType; label: string }[] = [
 
 const ExceptionDetailPage: React.FC = () => {
   const router = useRouter()
-  const { addExceptionRecord, exceptionRecords, currentVoyageId } = useFuelStore()
+  const { addExceptionRecord, exceptionRecords, currentVoyageId, reviewExceptionRecord } = useFuelStore()
   const recordId = router.params.id
 
   const existingRecord = useMemo(() => {
@@ -27,20 +27,21 @@ const ExceptionDetailPage: React.FC = () => {
   }, [exceptionRecords, recordId])
 
   const isEdit = !existingRecord
+  const canReview = existingRecord && (existingRecord.status === 'pending' || existingRecord.status === 'reviewing')
 
   const [date, setDate] = useState(existingRecord?.date || dayjs('2026-06-09').format('YYYY-MM-DD'))
   const [type, setType] = useState<ExceptionType>(existingRecord?.type || 'fuel_high')
   const [description, setDescription] = useState(existingRecord?.description || '')
   const [reason, setReason] = useState(existingRecord?.reason || '')
+  const [reviewComment, setReviewComment] = useState('')
 
   const handleSubmit = () => {
     if (!description || !reason) {
       Taro.showToast({ title: '请填写完整信息', icon: 'none' })
-        .catch(err => console.error('[ExceptionDetail] toast error:', err))
+        .catch(() => {})
       return
     }
 
-    console.log('[ExceptionDetail] Submit exception record')
     addExceptionRecord({
       voyageId: currentVoyageId,
       date,
@@ -52,14 +53,35 @@ const ExceptionDetailPage: React.FC = () => {
     Taro.showToast({ title: '提交成功', icon: 'success' })
       .then(() => {
         setTimeout(() => {
-          Taro.navigateBack().catch(err => console.error('[ExceptionDetail] navigateBack error:', err))
+          Taro.navigateBack().catch(() => {})
         }, 1000)
       })
-      .catch(err => console.error('[ExceptionDetail] submit toast error:', err))
+      .catch(() => {})
+  }
+
+  const handleReview = (status: 'approved' | 'rejected' | 'reviewing') => {
+    if (!existingRecord) return
+    if (!reviewComment && status !== 'reviewing') {
+      Taro.showToast({ title: '请填写审核意见', icon: 'none' })
+        .catch(() => {})
+      return
+    }
+
+    const finalComment = reviewComment || (status === 'reviewing' ? '审核中，待进一步核实' : '')
+    reviewExceptionRecord(existingRecord.id, status, finalComment)
+
+    const toastText = status === 'approved' ? '已通过' : status === 'rejected' ? '已驳回' : '已标记审核中'
+    Taro.showToast({ title: toastText, icon: 'success' })
+      .then(() => {
+        setTimeout(() => {
+          Taro.navigateBack().catch(() => {})
+        }, 1000)
+      })
+      .catch(() => {})
   }
 
   const handleCancel = () => {
-    Taro.navigateBack().catch(err => console.error('[ExceptionDetail] cancel error:', err))
+    Taro.navigateBack().catch(() => {})
   }
 
   const getStatusTagType = (status: string) => {
@@ -70,6 +92,15 @@ const ExceptionDetailPage: React.FC = () => {
       pending: 'primary'
     }
     return map[status] || 'primary'
+  }
+
+  const getTypeText = (t: string) => {
+    const map: Record<string, string> = {
+      fuel_high: '油耗偏高',
+      fuel_abnormal: '油耗异常',
+      other: '其他异常'
+    }
+    return map[t] || t
   }
 
   return (
@@ -144,7 +175,14 @@ const ExceptionDetailPage: React.FC = () => {
           <View className={styles.formGroup}>
             <Text className={styles.formLabel}>异常类型</Text>
             <View className={styles.readOnlyValue}>
-              {existingRecord?.type === 'fuel_high' ? '油耗偏高' : existingRecord?.type === 'fuel_abnormal' ? '油耗异常' : '其他异常'}
+              {getTypeText(existingRecord?.type || '')}
+            </View>
+          </View>
+
+          <View className={styles.formGroup}>
+            <Text className={styles.formLabel}>异常描述</Text>
+            <View className={styles.readOnlyValue}>
+              {existingRecord?.description}
             </View>
           </View>
 
@@ -173,6 +211,28 @@ const ExceptionDetailPage: React.FC = () => {
           </View>
           <View className={styles.reviewCommentBox}>
             <Text className={styles.reviewCommentText}>{existingRecord.reviewComment}</Text>
+          </View>
+        </View>
+      )}
+
+      {canReview && (
+        <View className={styles.reviewFormSection}>
+          <Text className={styles.reviewFormTitle}>主管审核</Text>
+          <View className={styles.formGroup}>
+            <Text className={styles.formLabel}>审核意见</Text>
+            <Textarea
+              className={styles.formTextarea}
+              value={reviewComment}
+              onInput={(e) => setReviewComment(e.detail.value)}
+              placeholder="请填写审核意见，说明通过或驳回的原因..."
+              placeholderClass={styles.formInputPlaceholder}
+              maxlength={300}
+            />
+          </View>
+          <View className={styles.reviewActions}>
+            <Button className={styles.reviewBtnReject} onClick={() => handleReview('rejected')}>驳回</Button>
+            <Button className={styles.reviewBtnReview} onClick={() => handleReview('reviewing')}>审核中</Button>
+            <Button className={styles.reviewBtnApprove} onClick={() => handleReview('approved')}>通过</Button>
           </View>
         </View>
       )}
